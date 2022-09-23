@@ -1,0 +1,69 @@
+# downloaded perl script from taget scan
+# needs two inputs
+1. miRNA seed seqs: get from targetscan
+- extract only human ones from the downloaded and formating it to required needs: 2604 unique miRNAs
+- human code (Hsa	Human	Homo sapiens	9606)
+
+2. MSA file of genes to scan: because this virus has just one RNA, use the whole RNA as 1 gene
+code 9999 is not annotated to any species, so using that
+
+# run the perl script on these files on carbonate
+cd /N/dc2/projects/CancerFight/Vidhur/COVID_19
+module load perl
+# test successful
+perl targetscan_70.pl miR_Family_info_sample.txt UTR_Sequences_sample.txt targetscan_70_output.txt
+perl targetscan_70.pl human_miRNAs_targetscan.txt UTR_Sequences_sample.txt targetscan_sample_output.txt
+# actual run
+perl targetscan_70.pl human_miRNAs_targetscan.txt COVID_19_genome_targetscan_input.txt targetscan_COVID_19_output.txt
+# not generating output, needs UTR MSA alignment
+
+#########################
+
+# using MEME suite
+
+1. use the miRNAs from biomart as fasta file: 1926 miRNAs
+2. run meme to find motifs from all miRNA sequences
+meme ensmbl_GRCH38_miRNAs.txt -dna -oc . -nostatus -time 18000 -mod anr -nmotifs 3 -minw 6 -maxw 50 -objfun classic -revcomp -markov_order 0
+http://meme-suite.org/info/status?service=MEME&id=appMEME_5.1.11586513244901-1450525051
+
+#carbonate
+
+module load meme/gnu/5.1.0
+cd /N/dc2/projects/CancerFight/Vidhur/COVID_19/MEME_run
+meme ensmbl_GRCH38_miRNAs_2.txt -dna -oc . -nostatus -time 18000 -mod anr -nmotifs 1926 -minw 6 -maxw 50 -objfun classic -revcomp -markov_order 0
+
+#run 3
+module load meme/gnu/5.1.0
+cd /N/dc2/projects/CancerFight/Vidhur/COVID_19/MEME_run/run3
+meme SARS-Cov2_Wuhan-Hu-1_complete_genome.fa -dna -oc . -nostatus -time 18000 -mod anr -nmotifs 200 -minw 6 -maxw 50 -objfun classic -revcomp -markov_order 0
+
+# running fimo
+http://meme-suite.org/info/status?service=FIMO&id=appFIMO_5.1.11586514957279-757113870
+
+
+# run 4
+
+make mirna file with only mirna name?
+cd /N/dc2/projects/CancerFight/Vidhur/COVID_19/MEME_run/run4
+meme sample_mirna_3.txt -dna -oc . -nostatus -time 18000 -mod anr -nmotifs 5 -minw 6 -maxw 22 -objfun classic -revcomp -markov_order 0
+fimo --oc . --verbosity 1 --thresh 1.0E-4 --norc meme.txt SARS-Cov2_Wuhan-Hu-1_complete_genome.fa
+
+fimo meme.txt SARS-Cov2_Wuhan-Hu-1_complete_genome.fa
+
+
+# r tyle
+fimo --oc . --verbosity 1 --thresh 1.0E-4 MIRBASE/Homo_sapiens_hsa.meme SARS-Cov2_Wuhan-Hu-1_complete_genome.fa
+MIRBASE/Homo_sapiens_hsa.meme
+
+
+# miranda
+#sysbio
+# downloaded miranda software: http://www.microrna.org/microrna/getDownloads.do
+cd /data2/Vidhur/miranda/miRanda-3.3a
+./configure
+make
+make check
+miranda -h
+nohup miranda /data2/Vidhur/miranda/ensmbl_GRCH38_miRNAs_2.txt /data2/Vidhur/miranda/SARS-Cov2_Wuhan-Hu-1_complete_genome.fa -strict -out /data2/Vidhur/miranda/human_miRNA_targets_in_CoV2.txt &
+
+nohup miranda /data2/Vidhur/miranda/ensmbl_GRCH38_miRNAs_2.txt /data2/Vidhur/miranda/SARS-Cov2_Wuhan-Hu-1_complete_genome.fa -sc 95 -strict -out /data2/Vidhur/miranda/human_miRNA_targets_in_CoV2_high_conf.txt &

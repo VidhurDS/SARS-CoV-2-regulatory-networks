@@ -1,0 +1,45 @@
+genome extracted from Genbank: MN908947.3
+https://www.ncbi.nlm.nih.gov/nuccore/MN908947.3?report=fasta
+https://www.viprbrc.org/brc/viprStrainDetails.spg?ncbiAccession=MN908947&decorator=corona
+
+# identify the RBPs having binding preference to the genome
+## done by rajneesh
+
+# intensity of motifs across the genome
+## get frequency of rbs
+use 1.Finding_frequency_RBPs.py file
+use 2.plotting_top_RBP_frequency.R
+
+## plot bar plot
+use 1.plotting_RBP_frequency.R to plot all RBP frequency
+
+## plot heatmap
+
+## pick top RBPs
+
+# intensity of these RBPs across human tissues
+## top RBP expression across tissues in GTEx
+
+# which human RNAs do these RBPs bind to?
+##########################################
+
+1. which miRNAs can bind to the genome
+- run targetscan on coivd genome
+
+2. identify the top miRNAs, functions
+- quantify the motif occurence or frequency
+- functional annotation?
+
+3. abundance of these miRNAs in different human cells
+- GTEx data, abundance extraction for top miRNAs
+- visulalize 
+
+#
+ intro about covid
+ what was done in the study
+ intro of miRNAs - infectious disease context
+ methodology
+ results
+
+# how does this effect? AS? DE?
+

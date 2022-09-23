@@ -1,0 +1,6 @@
+install.packages("preprocessCore")
+library(preprocessCore)
+data <- read.table("expression_merged.txt", header=TRUE, sep="\t")
+row.has.na <- apply(data, 1, function(x){any(is.na(x))})
+sum(row.has.na)
+data2 = normalize.quantiles(data)
